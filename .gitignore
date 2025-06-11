@@ -1,0 +1,58 @@
+# Archivos de backup de tareas (datos del usuario)
+tareas-backup-*.json
+
+# Archivos temporales del sistema
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Archivos de IDEs y editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos de Node.js (si se añaden dependencias)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Archivos de cache del navegador
+.cache/
+
+# Archivos de distribución
+dist/
+build/
+
+# Variables de entorno
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Archivos de sistema Windows
+ehthumbs.db
+Thumbs.db
+
+# Archivos de sistema macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Archivos de sistema Linux
+*~
+
+# Archivos temporales
+*.tmp
+*.temp 

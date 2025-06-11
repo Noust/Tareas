@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Mis Tareas Pendientes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- iOS PWA Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Tareas">
+    <link rel="apple-touch-icon" href="icons/icon-152x152.png">
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#0a0a0a">
+    <meta name="msapplication-TileColor" content="#0a0a0a">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1><i class="fas fa-tasks"></i> Mis Tareas Pendientes</h1>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Left Panel - Todo List -->
+            <section class="todo-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-list-check"></i> Lista de Tareas</h2>
+                    <button class="collapse-btn" data-section="todo-section">
+                        <i class="fas fa-chevron-up"></i>
+                    </button>
+                </div>
+                
+                <div class="todo-content collapsible-content">
+                <!-- Add Task Form -->
+                <div class="add-task-form">
+                    <input type="text" id="taskInput" placeholder="¿Qué necesitas hacer?" maxlength="100">
+                    <input type="date" id="taskDate" placeholder="Fecha (opcional)">
+                    <input type="time" id="taskTime" placeholder="Hora (opcional)">
+                    <label class="no-date-checkbox">
+                        <input type="checkbox" id="noDateTask"> Sin fecha específica
+                    </label>
+                    <label class="recurring-checkbox">
+                        <input type="checkbox" id="recurringTask"> Tarea recurrente
+                    </label>
+                    <select id="taskPriority" class="priority-select">
+                        <option value="low">🟢 Baja</option>
+                        <option value="medium" selected>🟡 Media</option>
+                        <option value="high">🟠 Alta</option>
+                        <option value="urgent">🔴 Urgente</option>
+                    </select>
+                    <button id="addTaskBtn"><i class="fas fa-plus"></i> Agregar</button>
+                </div>
+
+                <!-- Recurring Task Options -->
+                <div class="recurring-options" id="recurringOptions" style="display: none;">
+                    <div class="recurring-section">
+                        <h4><i class="fas fa-repeat"></i> Configuración de Recurrencia</h4>
+                        <div class="recurring-controls">
+                            <div class="recurring-type">
+                                <label>Frecuencia:</label>
+                                <select id="recurringType">
+                                    <option value="daily">Diariamente</option>
+                                    <option value="monthly">Mensualmente</option>
+                                    <option value="custom">Días específicos</option>
+                                </select>
+                            </div>
+                            <div class="recurring-days" id="recurringDays" style="display: none;">
+                                <label>Días de la semana:</label>
+                                <div class="days-selector">
+                                    <label class="day-option"><input type="checkbox" value="0"> Dom</label>
+                                    <label class="day-option"><input type="checkbox" value="1"> Lun</label>
+                                    <label class="day-option"><input type="checkbox" value="2"> Mar</label>
+                                    <label class="day-option"><input type="checkbox" value="3"> Mié</label>
+                                    <label class="day-option"><input type="checkbox" value="4"> Jue</label>
+                                    <label class="day-option"><input type="checkbox" value="5"> Vie</label>
+                                    <label class="day-option"><input type="checkbox" value="6"> Sáb</label>
+                                </div>
+                            </div>
+                            <div class="recurring-monthly-days" id="recurringMonthlyDays" style="display: none;">
+                                <label>Días del mes:</label>
+                                <div class="monthly-days-selector">
+                                    <div class="monthly-days-grid">
+                                        <label class="monthly-day-option"><input type="checkbox" value="1"> 1</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="2"> 2</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="3"> 3</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="4"> 4</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="5"> 5</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="6"> 6</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="7"> 7</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="8"> 8</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="9"> 9</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="10"> 10</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="11"> 11</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="12"> 12</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="13"> 13</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="14"> 14</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="15"> 15</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="16"> 16</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="17"> 17</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="18"> 18</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="19"> 19</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="20"> 20</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="21"> 21</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="22"> 22</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="23"> 23</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="24"> 24</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="25"> 25</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="26"> 26</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="27"> 27</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="28"> 28</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="29"> 29</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="30"> 30</label>
+                                        <label class="monthly-day-option"><input type="checkbox" value="31"> 31</label>
+                                    </div>
+                                    <div class="monthly-options-note">
+                                        <small>Nota: Si un mes no tiene el día seleccionado (ej: 31 en febrero), se omitirá automáticamente.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="recurring-time">
+                                <label class="time-reminder-checkbox">
+                                    <input type="checkbox" id="hasTimeReminder"> Recordatorio con hora específica
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Task Filters -->
+                <div class="task-filters">
+                    <button class="filter-btn active" data-filter="all">Todas</button>
+                    <button class="filter-btn" data-filter="pending">Pendientes</button>
+                    <button class="filter-btn" data-filter="completed">Completadas</button>
+                    <button class="filter-btn" data-filter="recurring">Recurrentes</button>
+                    <button class="filter-btn" data-filter="no-date">Sin fecha</button>
+                    <div class="filter-divider"></div>
+                    <button class="filter-btn priority-filter" data-filter="urgent">🔴 Urgente</button>
+                    <button class="filter-btn priority-filter" data-filter="high">🟠 Alta</button>
+                    <button class="filter-btn priority-filter" data-filter="medium">🟡 Media</button>
+                    <button class="filter-btn priority-filter" data-filter="low">🟢 Baja</button>
+                </div>
+
+                <!-- Tasks with Specific Date -->
+                <div class="dated-tasks-section">
+                    <h3 class="dated-tasks-header">
+                        <i class="fas fa-calendar-day"></i> Tareas con fecha específica
+                        <span id="datedTasksCount" class="task-count">0</span>
+                        <button class="collapse-btn" data-section="dated-tasks">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
+                    </h3>
+                    <div class="dated-tasks-container collapsible-content">
+                        <ul id="datedTasksList" class="tasks-list">
+                            <!-- Tasks with specific date will be added here -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Recurring Tasks -->
+                <div class="recurring-tasks-section">
+                    <h3 class="recurring-header">
+                        <i class="fas fa-repeat"></i> Tareas Recurrentes
+                        <span id="recurringTasksCount" class="task-count">0</span>
+                        <button class="collapse-btn" data-section="recurring-tasks">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
+                    </h3>
+                    <div class="recurring-tasks-container collapsible-content">
+                        <ul id="recurringTasksList" class="tasks-list">
+                            <!-- Recurring tasks will be added here -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Tasks without specific date -->
+                <div class="no-date-tasks-section">
+                    <h3 class="no-date-header">
+                        <i class="fas fa-inbox"></i> Tareas sin fecha específica
+                        <span id="noDateTasksCount" class="task-count">0</span>
+                        <button class="collapse-btn" data-section="no-date-tasks">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
+                    </h3>
+                    <div class="no-date-tasks-container collapsible-content">
+                        <ul id="noDateTasksList" class="tasks-list">
+                            <!-- Tasks without date will be added here -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Task Stats -->
+                <div class="task-stats">
+                    <span id="totalTasks">0 tareas totales</span>
+                    <span id="pendingTasks">0 pendientes</span>
+                    <span id="completedTasks">0 completadas</span>
+                </div>
+
+                <!-- Backup Controls -->
+                <div class="backup-controls">
+                    <button id="exportBtn" class="backup-btn" title="Exportar tareas como archivo de respaldo">
+                        <i class="fas fa-download"></i> Exportar
+                    </button>
+                    <button id="importBtn" class="backup-btn" title="Importar tareas desde archivo de respaldo">
+                        <i class="fas fa-upload"></i> Importar
+                    </button>
+                    <input type="file" id="importFile" accept=".json" style="display: none;">
+                </div>
+                </div> <!-- Close todo-content -->
+            </section>
+
+            <!-- Right Panel - Calendar -->
+            <section class="calendar-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-calendar-alt"></i> Calendario</h2>
+                    <button class="collapse-btn" data-section="calendar-section">
+                        <i class="fas fa-chevron-up"></i>
+                    </button>
+                </div>
+                
+                <div class="calendar-container collapsible-content">
+                    <!-- Calendar Navigation -->
+                    <div class="calendar-nav">
+                        <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                        <h3 id="currentMonth">Enero 2024</h3>
+                        <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+
+                    <!-- Calendar Grid -->
+                    <div class="calendar-grid">
+                        <div class="day-header">Dom</div>
+                        <div class="day-header">Lun</div>
+                        <div class="day-header">Mar</div>
+                        <div class="day-header">Mié</div>
+                        <div class="day-header">Jue</div>
+                        <div class="day-header">Vie</div>
+                        <div class="day-header">Sáb</div>
+                        <!-- Calendar days will be dynamically generated -->
+                    </div>
+                </div>
+
+                <!-- Selected Date Tasks -->
+                <div class="selected-date-tasks">
+                    <h4 id="selectedDateTitle">Selecciona una fecha</h4>
+                    <ul id="selectedDateTasksList">
+                        <!-- Tasks for selected date will appear here -->
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then((registration) => {
+                        console.log('Service Worker registrado exitosamente:', registration.scope);
+                        
+                        // Verifica si hay actualizaciones disponibles
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // Hay una nueva versión disponible
+                                    if (confirm('Hay una nueva versión de la aplicación disponible. ¿Deseas actualizar?')) {
+                                        window.location.reload();
+                                    }
+                                }
+                            });
+                        });
+                    })
+                    .catch((error) => {
+                        console.log('Error al registrar Service Worker:', error);
+                    });
+            });
+        }
+
+        // Prompt de instalación de PWA
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Previene que Chrome 67 y versiones anteriores muestren automáticamente el prompt
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Crear botón de instalación
+            const installButton = document.createElement('button');
+            installButton.textContent = '📱 Instalar App';
+            installButton.className = 'install-app-btn';
+            installButton.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #1a1a1a;
+                color: white;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                padding: 10px 15px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 14px;
+                z-index: 1000;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+                transition: all 0.3s ease;
+            `;
+            
+            installButton.addEventListener('click', () => {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Usuario aceptó instalar la PWA');
+                        installButton.remove();
+                    }
+                    deferredPrompt = null;
+                });
+            });
+            
+            document.body.appendChild(installButton);
+            
+            // Auto-ocultar el botón después de 10 segundos
+            setTimeout(() => {
+                if (installButton.parentNode) {
+                    installButton.style.opacity = '0.5';
+                    setTimeout(() => {
+                        if (installButton.parentNode) {
+                            installButton.remove();
+                        }
+                    }, 3000);
+                }
+            }, 10000);
+        });
+
+        window.addEventListener('appinstalled', (evt) => {
+            console.log('PWA instalada exitosamente');
+        });
+    </script>
+</body>
+</html> 

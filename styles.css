@@ -1,0 +1,1596 @@
+/* Reset y estilos base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Mejoras para dispositivos táctiles */
+@media (hover: none) and (pointer: coarse) {
+    /* Elementos táctiles más grandes */
+    button, input[type="checkbox"], .filter-btn, .delete-btn, .calendar-day {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Reduce el hover en dispositivos táctiles */
+    .task-item:hover,
+    .filter-btn:hover,
+    .delete-btn:hover,
+    .calendar-day:hover,
+    .collapse-btn:hover {
+        transform: none;
+    }
+}
+
+body {
+    font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #0a0a0a;
+    min-height: 100vh;
+    color: #f8f9fa;
+    font-weight: 400;
+    line-height: 1.6;
+    padding: 1rem 0;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 1rem 2rem;
+}
+
+/* Header */
+.header {
+    background: rgba(24, 24, 27, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    position: relative;
+    border-radius: 16px;
+}
+
+.header h1 {
+    text-align: center;
+    color: #ffffff;
+    font-size: 2.25rem;
+    font-weight: 300;
+    letter-spacing: -0.025em;
+}
+
+.header i {
+    margin-right: 0.75rem;
+    color: #a1a1aa;
+}
+
+/* Main Content */
+.main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    flex: 1;
+}
+
+/* Sections */
+.todo-section, .calendar-section {
+    background: rgba(24, 24, 27, 0.6);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 2.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+.section-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-header h2 {
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 400;
+    letter-spacing: -0.025em;
+}
+
+.section-header i {
+    color: #a1a1aa;
+    margin-right: 0.75rem;
+}
+
+/* Collapse Button Styles */
+.collapse-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    color: #a1a1aa;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+}
+
+.collapse-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.collapse-btn i {
+    transition: transform 0.3s ease;
+    margin: 0;
+}
+
+.collapse-btn.collapsed i {
+    transform: rotate(180deg);
+}
+
+/* Collapsible Content */
+.collapsible-content {
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    max-height: 5000px;
+    opacity: 1;
+}
+
+.collapsible-content.collapsed {
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.3s ease-in, opacity 0.3s ease-in;
+}
+
+/* Task section headers with collapse buttons */
+.dated-tasks-header, .recurring-header, .no-date-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #ffffff;
+    font-size: 1.125rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dated-tasks-header .collapse-btn,
+.recurring-header .collapse-btn,
+.no-date-header .collapse-btn {
+    margin-left: 0.5rem;
+}
+
+/* Add Task Form */
+.add-task-form {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+#taskInput {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.875rem 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    transition: all 0.2s ease;
+}
+
+#taskInput:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+#taskInput::placeholder {
+    color: #71717a;
+}
+
+/* Mejoras para inputs en móviles */
+input, select, textarea, button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 8px;
+}
+
+input[type="date"], input[type="time"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* Evitar zoom en inputs en iOS */
+@media screen and (max-width: 768px) {
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    select,
+    textarea {
+        font-size: 16px;
+    }
+}
+
+#taskDate, #taskTime {
+    padding: 0.875rem 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    transition: all 0.2s ease;
+}
+
+#taskDate:focus, #taskTime:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.priority-select {
+    padding: 0.875rem 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    min-width: 140px;
+}
+
+.priority-select:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.priority-select option {
+    background: #18181b;
+    color: #ffffff;
+    padding: 0.5rem;
+}
+
+#addTaskBtn {
+    background: #ffffff;
+    color: #0a0a0a;
+    border: none;
+    padding: 0.875rem 1.75rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: -0.01em;
+}
+
+#addTaskBtn:hover {
+    background: #f4f4f5;
+    transform: translateY(-1px);
+}
+
+/* No date checkbox and recurring checkbox */
+.no-date-checkbox, .recurring-checkbox, .time-reminder-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #a1a1aa;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    user-select: none;
+    min-width: 160px;
+}
+
+.no-date-checkbox:hover, .recurring-checkbox:hover, .time-reminder-checkbox:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.no-date-checkbox input[type="checkbox"], 
+.recurring-checkbox input[type="checkbox"],
+.time-reminder-checkbox input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #ffffff;
+    cursor: pointer;
+}
+
+#taskDate:disabled, #taskTime:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* Recurring Options */
+.recurring-options {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.recurring-section h4 {
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.recurring-section h4 i {
+    color: #a1a1aa;
+}
+
+.recurring-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.recurring-type, .recurring-days, .recurring-monthly-days, .recurring-time {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.recurring-type label, .recurring-days label:first-child, .recurring-monthly-days label:first-child, .recurring-time label:first-child {
+    color: #a1a1aa;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+#recurringType {
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    font-size: 0.9rem;
+    max-width: 200px;
+}
+
+#recurringType:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+#recurringType option {
+    background: #18181b;
+    color: #ffffff;
+}
+
+.days-selector {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.day-option {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+    user-select: none;
+    color: #a1a1aa;
+}
+
+.day-option:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+.day-option input[type="checkbox"] {
+    width: 12px;
+    height: 12px;
+    accent-color: #ffffff;
+}
+
+.day-option:has(input:checked) {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    font-weight: 500;
+}
+
+/* Monthly days selector styles */
+.monthly-days-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.monthly-days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.25rem;
+}
+
+.monthly-day-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 0.375rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.8rem;
+    user-select: none;
+    color: #a1a1aa;
+    min-height: 32px;
+}
+
+.monthly-day-option:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+.monthly-day-option input[type="checkbox"] {
+    width: 10px;
+    height: 10px;
+    accent-color: #ffffff;
+    margin-right: 0.125rem;
+}
+
+.monthly-day-option:has(input:checked) {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.monthly-options-note {
+    color: #71717a;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 6px;
+    border-left: 3px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Recurring Tasks Section */
+.recurring-tasks-section {
+    margin-bottom: 1.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    padding: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* These styles are now handled by the combined rule above */
+
+.recurring-tasks-container {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-top: 2px;
+}
+
+.recurring-tasks-section.empty {
+    display: none;
+}
+
+/* Task Filters */
+.task-filters {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 0.5rem 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 400;
+    color: #a1a1aa;
+    font-size: 0.875rem;
+    letter-spacing: -0.01em;
+}
+
+.filter-btn.active,
+.filter-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.filter-divider {
+    width: 1px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.12);
+    margin: 0 0.5rem;
+    align-self: center;
+}
+
+.priority-filter.active {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+/* Dated Tasks Section */
+.dated-tasks-section {
+    margin-bottom: 1.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    padding: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* These styles are now handled by the combined rule above */
+
+.dated-tasks-container {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-top: 2px;
+}
+
+.dated-tasks-section.empty {
+    display: none;
+}
+
+/* No Date Tasks Section */
+.no-date-tasks-section {
+    margin-bottom: 1.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    padding: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* These styles are now handled by the combined rule above */
+
+.task-count {
+    background: rgba(255, 255, 255, 0.1);
+    color: #a1a1aa;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-left: auto;
+}
+
+.no-date-tasks-container {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-top: 2px;
+}
+
+.no-date-tasks-section.empty {
+    display: none;
+}
+
+.tasks-list {
+    list-style: none;
+}
+
+.task-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.2s ease;
+}
+
+.task-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+    transform: translateY(-1px);
+}
+
+.task-item.completed {
+    opacity: 0.5;
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.06);
+}
+
+/* Priority Styles */
+.task-item.priority-urgent {
+    border-left: 4px solid #ef4444;
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.2);
+}
+
+.task-item.priority-high {
+    border-left: 4px solid #f97316;
+    background: rgba(249, 115, 22, 0.08);
+    border-color: rgba(249, 115, 22, 0.2);
+}
+
+.task-item.priority-medium {
+    border-left: 4px solid #eab308;
+    background: rgba(234, 179, 8, 0.08);
+    border-color: rgba(234, 179, 8, 0.2);
+}
+
+.task-item.priority-low {
+    border-left: 4px solid #22c55e;
+    background: rgba(34, 197, 94, 0.08);
+    border-color: rgba(34, 197, 94, 0.2);
+}
+
+.task-item.priority-urgent:hover {
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.task-item.priority-high:hover {
+    background: rgba(249, 115, 22, 0.12);
+    border-color: rgba(249, 115, 22, 0.3);
+}
+
+.task-item.priority-medium:hover {
+    background: rgba(234, 179, 8, 0.12);
+    border-color: rgba(234, 179, 8, 0.3);
+}
+
+.task-item.priority-low:hover {
+    background: rgba(34, 197, 94, 0.12);
+    border-color: rgba(34, 197, 94, 0.3);
+}
+
+.task-priority-indicator {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-weight: 500;
+    margin-top: 0.25rem;
+    display: inline-block;
+    min-width: 70px;
+    text-align: center;
+}
+
+.priority-urgent .task-priority-indicator {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.priority-high .task-priority-indicator {
+    background: rgba(249, 115, 22, 0.2);  
+    color: #fdba74;
+    border: 1px solid rgba(249, 115, 22, 0.3);
+}
+
+.priority-medium .task-priority-indicator {
+    background: rgba(234, 179, 8, 0.2);
+    color: #fde047;
+    border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.priority-low .task-priority-indicator {
+    background: rgba(34, 197, 94, 0.2);
+    color: #86efac;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.task-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #ffffff;
+}
+
+.task-content {
+    flex: 1;
+}
+
+.task-text {
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+    color: #ffffff;
+    font-weight: 400;
+}
+
+.task-item.completed .task-text {
+    text-decoration: line-through;
+    color: #71717a;
+}
+
+.task-date {
+    font-size: 0.8rem;
+    color: #a1a1aa;
+}
+
+.task-time {
+    color: #a1a1aa;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.task-time i {
+    font-size: 0.75rem;
+}
+
+.task-recurring-info {
+    color: #a78bfa;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0.25rem;
+}
+
+.task-recurring-info i {
+    font-size: 0.75rem;
+}
+
+.task-item.recurring {
+    border-left: 4px solid #a78bfa;
+    background: rgba(167, 139, 250, 0.08);
+    border-color: rgba(167, 139, 250, 0.2);
+}
+
+.task-item.recurring:hover {
+    background: rgba(167, 139, 250, 0.12);
+    border-color: rgba(167, 139, 250, 0.3);
+}
+
+.task-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.delete-btn {
+    background: rgba(255, 255, 255, 0.08);
+    color: #a1a1aa;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.delete-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    transform: scale(1.05);
+}
+
+/* Task Stats */
+.task-stats {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1.25rem;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: #a1a1aa;
+    flex-wrap: wrap;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Backup Controls */
+.backup-controls {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.backup-btn {
+    padding: 0.625rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    color: #a1a1aa;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.backup-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.backup-btn i {
+    font-size: 0.75rem;
+}
+
+/* Calendar */
+.calendar-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0 0.5rem;
+}
+
+.calendar-nav button {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.calendar-nav button:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: scale(1.05);
+}
+
+#currentMonth {
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: #ffffff;
+    letter-spacing: -0.025em;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.day-header {
+    background: rgba(255, 255, 255, 0.08);
+    color: #a1a1aa;
+    padding: 1rem 0.5rem;
+    text-align: center;
+    font-weight: 500;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.calendar-day {
+    background: rgba(255, 255, 255, 0.02);
+    padding: 1rem 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 56px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    color: #ffffff;
+    font-weight: 400;
+}
+
+.calendar-day:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.calendar-day.today {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.calendar-day.selected {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.calendar-day.other-month {
+    color: #52525b;
+    background: rgba(255, 255, 255, 0.01);
+}
+
+.calendar-day.has-tasks::after {
+    content: '';
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    width: 6px;
+    height: 6px;
+    background: #ffffff;
+    border-radius: 50%;
+    opacity: 0.7;
+}
+
+/* Selected Date Tasks */
+.selected-date-tasks {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+#selectedDateTitle {
+    color: #ffffff;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: -0.025em;
+}
+
+#selectedDateTasksList {
+    list-style: none;
+}
+
+#selectedDateTasksList li {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    border-left: 2px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.875rem;
+    color: #e4e4e7;
+}
+
+
+
+/* Responsive Design - Tablet */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0.75rem 1.5rem;
+    }
+
+    .main {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .header {
+        padding: 1.75rem;
+    }
+
+    .header h1 {
+        font-size: 2rem;
+    }
+
+    .todo-section, .calendar-section {
+        padding: 2rem;
+    }
+}
+
+/* Responsive Design - Mobile */
+@media (max-width: 768px) {
+    .container {
+        padding: 0.75rem 1rem;
+        gap: 1.5rem;
+    }
+
+    /* Asegurar que las secciones estén visibles por defecto en móviles */
+    .collapsible-content {
+        max-height: none !important;
+        opacity: 1 !important;
+    }
+
+    .collapsible-content.collapsed {
+        max-height: 0 !important;
+        opacity: 0 !important;
+    }
+
+    .main {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .header {
+        padding: 1.5rem;
+        border-radius: 12px;
+    }
+
+    .header h1 {
+        font-size: 1.75rem;
+        line-height: 1.3;
+    }
+
+    .todo-section, .calendar-section {
+        padding: 1.5rem;
+        border-radius: 12px;
+    }
+
+    .section-header {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: nowrap;
+    }
+
+    .section-header h2 {
+        font-size: 1.375rem;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .collapse-btn {
+        min-width: 32px;
+        height: 32px;
+        padding: 0.5rem;
+        flex-shrink: 0;
+    }
+
+    /* Add Task Form */
+    .add-task-form {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    #taskInput {
+        min-width: 100%;
+        width: 100%;
+        padding: 1rem 1.25rem;
+        font-size: 1rem;
+    }
+
+    #taskDate, #taskTime {
+        width: 100%;
+        padding: 1rem 1.25rem;
+        font-size: 1rem;
+    }
+
+    .priority-select {
+        width: 100%;
+        padding: 1rem 1.25rem;
+        font-size: 1rem;
+    }
+
+    #addTaskBtn {
+        width: 100%;
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+        justify-content: center;
+    }
+
+    .no-date-checkbox, .recurring-checkbox, .time-reminder-checkbox {
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+        padding: 0.75rem;
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    /* Recurring Options */
+    .recurring-options {
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .recurring-controls {
+        gap: 1rem;
+    }
+
+    .recurring-type, .recurring-days, .recurring-monthly-days, .recurring-time {
+        margin-bottom: 1rem;
+    }
+
+    .recurring-type select,
+    #recurringType {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        font-size: 0.95rem;
+    }
+
+    .days-selector {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.5rem;
+    }
+
+    .day-option {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.9rem;
+        text-align: center;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .monthly-days-grid {
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.375rem;
+    }
+
+    .monthly-day-option {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.85rem;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Task Filters */
+    .task-filters {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        justify-content: flex-start;
+    }
+
+    .filter-btn {
+        font-size: 0.875rem;
+        padding: 0.625rem 1rem;
+        min-height: 44px;
+        flex: 1;
+        min-width: calc(50% - 0.25rem);
+        justify-content: center;
+    }
+
+    .priority-filter {
+        min-width: calc(25% - 0.375rem);
+    }
+
+    .filter-divider {
+        display: none;
+    }
+
+    /* Task Sections */
+    .dated-tasks-section,
+    .recurring-tasks-section,
+    .no-date-tasks-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .dated-tasks-header,
+    .recurring-header,
+    .no-date-header {
+        font-size: 1.125rem;
+        padding: 1rem;
+        flex-wrap: nowrap;
+        gap: 0.5rem;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .dated-tasks-header .collapse-btn,
+    .recurring-header .collapse-btn,
+    .no-date-header .collapse-btn {
+        min-width: 32px;
+        height: 32px;
+        padding: 0.375rem;
+        flex-shrink: 0;
+    }
+
+    .task-count {
+        font-size: 0.8rem;
+        padding: 0.25rem 0.5rem;
+        min-width: 24px;
+        height: 24px;
+        margin-left: 0.5rem;
+    }
+
+    /* Task Items */
+    .task-item {
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        border-radius: 8px;
+    }
+
+    .task-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .task-text {
+        font-size: 0.95rem;
+        line-height: 1.5;
+        word-break: break-word;
+    }
+
+    .task-date,
+    .task-time {
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+    }
+
+    .task-recurring-info {
+        font-size: 0.8rem;
+        margin-top: 0.5rem;
+    }
+
+    .task-actions {
+        margin-left: 0.75rem;
+    }
+
+    .delete-btn {
+        padding: 0.5rem;
+        min-width: 44px;
+        height: 44px;
+    }
+
+    .task-checkbox {
+        width: 20px;
+        height: 20px;
+        margin-right: 0.75rem;
+    }
+
+    .task-priority-indicator {
+        width: 6px;
+        height: 6px;
+        left: 6px;
+    }
+
+    /* Task Stats */
+    .task-stats {
+        flex-direction: column;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        padding: 1rem;
+        text-align: center;
+    }
+
+    /* Backup Controls */
+    .backup-controls {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .backup-btn {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        font-size: 0.95rem;
+        justify-content: center;
+    }
+
+    /* Calendar */
+    .calendar-nav {
+        margin-bottom: 1rem;
+    }
+
+    .calendar-nav button {
+        padding: 0.75rem;
+        min-width: 44px;
+        height: 44px;
+    }
+
+    #currentMonth {
+        font-size: 1.125rem;
+    }
+
+    .calendar-grid {
+        gap: 2px;
+        margin-bottom: 1.5rem;
+    }
+
+    .day-header {
+        font-size: 0.8rem;
+        padding: 0.5rem;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .calendar-day {
+        min-height: 44px;
+        font-size: 0.9rem;
+        padding: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Selected Date Tasks */
+    .selected-date-tasks {
+        padding: 1rem;
+    }
+
+    #selectedDateTitle {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+    }
+
+    #selectedDateTasksList li {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Small Mobile Devices */
+@media (max-width: 480px) {
+    .container {
+        padding: 0.5rem;
+        gap: 1rem;
+    }
+
+    body {
+        padding: 0.5rem 0;
+    }
+
+    .header {
+        padding: 1.25rem;
+        border-radius: 8px;
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    .todo-section, .calendar-section {
+        padding: 1.25rem;
+        border-radius: 8px;
+    }
+
+    .section-header {
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        flex-wrap: nowrap;
+    }
+
+    .section-header h2 {
+        font-size: 1.25rem;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .collapse-btn {
+        flex-shrink: 0;
+    }
+
+    /* Add Task Form for very small screens */
+    #taskInput,
+    #taskDate,
+    #taskTime,
+    .priority-select,
+    #addTaskBtn {
+        padding: 0.875rem 1rem;
+        font-size: 0.95rem;
+        min-height: 44px;
+    }
+
+    /* Task Filters for very small screens */
+    .filter-btn {
+        font-size: 0.8rem;
+        padding: 0.5rem 0.75rem;
+        min-width: calc(50% - 0.25rem);
+        min-height: 44px;
+    }
+
+    .priority-filter {
+        min-width: calc(50% - 0.25rem);
+    }
+
+    /* Task Items for very small screens */
+    .task-item {
+        padding: 0.875rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .task-text {
+        font-size: 0.9rem;
+    }
+
+    .task-date,
+    .task-time,
+    .task-recurring-info {
+        font-size: 0.8rem;
+    }
+
+    .delete-btn {
+        min-width: 44px;
+        height: 44px;
+        padding: 0.625rem;
+    }
+
+    .task-checkbox {
+        width: 18px;
+        height: 18px;
+    }
+
+    /* Calendar for very small screens */
+    .calendar-grid {
+        gap: 1px;
+    }
+
+    .day-header {
+        font-size: 0.75rem;
+        padding: 0.375rem;
+        height: 40px;
+    }
+
+    .calendar-day {
+        min-height: 40px;
+        font-size: 0.8rem;
+        padding: 0.375rem;
+    }
+
+    .calendar-nav button {
+        min-width: 44px;
+        height: 44px;
+        padding: 0.625rem;
+    }
+
+    #currentMonth {
+        font-size: 1rem;
+    }
+
+    /* Recurring options for small screens */
+    .days-selector {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.375rem;
+    }
+
+    .day-option {
+        min-height: 40px;
+        font-size: 0.85rem;
+    }
+
+    .monthly-days-grid {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 0.25rem;
+    }
+
+    .monthly-day-option {
+        min-height: 36px;
+        font-size: 0.8rem;
+    }
+
+    /* Task sections headers */
+    .dated-tasks-header,
+    .recurring-header,
+    .no-date-header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding: 0.875rem;
+        flex-wrap: nowrap;
+    }
+
+    .dated-tasks-header i,
+    .recurring-header i,
+    .no-date-header i {
+        margin-right: 0.5rem;
+    }
+
+    .dated-tasks-header .collapse-btn,
+    .recurring-header .collapse-btn,
+    .no-date-header .collapse-btn {
+        min-width: 32px;
+        height: 32px;
+        flex-shrink: 0;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 360px) {
+    .container {
+        padding: 0.25rem;
+    }
+
+    .header {
+        padding: 1rem;
+    }
+
+    .header h1 {
+        font-size: 1.375rem;
+    }
+
+    .todo-section, .calendar-section {
+        padding: 1rem;
+    }
+
+    .filter-btn,
+    .priority-filter {
+        min-width: 100%;
+        margin-bottom: 0.25rem;
+    }
+
+    .task-stats {
+        font-size: 0.85rem;
+    }
+
+    .days-selector {
+        grid-template-columns: 1fr;
+        gap: 0.25rem;
+    }
+
+    .monthly-days-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.125rem;
+    }
+
+    .monthly-day-option {
+        min-height: 32px;
+        font-size: 0.75rem;
+    }
+
+    .day-header {
+        height: 36px;
+        font-size: 0.7rem;
+    }
+
+    .calendar-day {
+        min-height: 36px;
+        font-size: 0.75rem;
+    }
+}
+
+/* Scrollbar personalizado */
+.dated-tasks-container::-webkit-scrollbar,
+.no-date-tasks-container::-webkit-scrollbar,
+.recurring-tasks-container::-webkit-scrollbar {
+    width: 4px;
+}
+
+.dated-tasks-container::-webkit-scrollbar-track,
+.no-date-tasks-container::-webkit-scrollbar-track,
+.recurring-tasks-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+}
+
+.dated-tasks-container::-webkit-scrollbar-thumb,
+.no-date-tasks-container::-webkit-scrollbar-thumb,
+.recurring-tasks-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+}
+
+.dated-tasks-container::-webkit-scrollbar-thumb:hover,
+.no-date-tasks-container::-webkit-scrollbar-thumb:hover,
+.recurring-tasks-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+} 
