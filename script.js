@@ -53,12 +53,8 @@ document.addEventListener('DOMContentLoaded', function() {
     loadTasks();
     cleanupPastRecurringInstances(); // Limpiar instancias de tareas recurrentes pasadas
     setTodayAsDefault();
-    renderDatedTasks();
-    renderNoDateTasks();
-    renderRecurringTasks();
     generateRecurringTasks(); // Generar instancias para hoy
-    generateCalendar(); // Generar calendario después de las tareas recurrentes
-    updateTaskStats();
+    renderAllTasks();
     initializeCollapsible(); // Inicializar funcionalidad de colapso
     ensureMobileSectionsVisible(); // Asegurar que las secciones estén visibles en móviles
 });
@@ -126,9 +122,7 @@ filterBtns.forEach(btn => {
         filterBtns.forEach(b => b.classList.remove('active'));
         this.classList.add('active');
         currentFilter = this.dataset.filter;
-        renderDatedTasks();
-        renderNoDateTasks();
-        renderRecurringTasks();
+        renderAllTasks();
     });
 });
 
@@ -165,7 +159,7 @@ window.addEventListener('resize', function() {
 // Funciones principales
 function setTodayAsDefault() {
     const today = new Date();
-    const todayString = today.toISOString().split('T')[0];
+    const todayString = formatDateToString(today);
     taskDate.value = todayString;
     selectedDate = todayString;
     updateSelectedDateTasks();
@@ -235,12 +229,7 @@ function addTask() {
     }
     
     onTasksChanged(true);
-    renderDatedTasks();
-    renderNoDateTasks();
-    renderRecurringTasks();
-    updateTaskStats();
-    generateCalendar();
-    updateSelectedDateTasks();
+    renderAllTasks();
     
     // Limpiar formulario
     taskInput.value = '';
@@ -275,12 +264,7 @@ function deleteTask(id) {
         }
         
         onTasksChanged(true);
-        renderDatedTasks();
-        renderNoDateTasks();
-        renderRecurringTasks();
-        updateTaskStats();
-        generateCalendar();
-        updateSelectedDateTasks();
+        renderAllTasks();
     }
 }
 
@@ -289,12 +273,17 @@ function toggleTask(id) {
     if (task) {
         task.completed = !task.completed;
         onTasksChanged(); // Usar delay para toggle (puede hacerse múltiples veces rápido)
-        renderDatedTasks();
-        renderNoDateTasks();
-        renderRecurringTasks();
-        updateTaskStats();
-        updateSelectedDateTasks();
+        renderAllTasks();
     }
+}
+
+function renderAllTasks() {
+    renderDatedTasks();
+    renderNoDateTasks();
+    renderRecurringTasks();
+    updateTaskStats();
+    generateCalendar();
+    updateSelectedDateTasks();
 }
 
 function renderDatedTasks() {
@@ -353,12 +342,11 @@ function renderDatedTasks() {
     // Actualizar contador
     datedTasksCount.textContent = filteredTasks.length;
     
-    // Mostrar/ocultar sección según si hay tareas
-    if (filteredTasks.length === 0) {
-        datedTasksSection.classList.add('empty');
-    } else {
-        datedTasksSection.classList.remove('empty');
-    }
+    // Siempre mostrar la sección
+    datedTasksSection.classList.remove('empty');
+    
+    // Manejar colapso automático según contenido
+    autoCollapseSection('dated-tasks', filteredTasks.length === 0);
     
     datedTasksList.innerHTML = '';
     
@@ -375,7 +363,6 @@ function renderDatedTasks() {
                 </p>
             </li>
         `;
-        datedTasksSection.classList.remove('empty');
         return;
     }
     
@@ -452,26 +439,28 @@ function renderNoDateTasks() {
     // Actualizar contador
     noDateTasksCount.textContent = noDateTasks.length;
     
-    // Mostrar/ocultar sección según si hay tareas
-    if (noDateTasks.length === 0) {
-        noDateTasksSection.classList.add('empty');
-    } else {
-        noDateTasksSection.classList.remove('empty');
-    }
+    // Siempre mostrar la sección
+    noDateTasksSection.classList.remove('empty');
+    
+    // Manejar colapso automático según contenido
+    autoCollapseSection('no-date-tasks', noDateTasks.length === 0);
     
     noDateTasksList.innerHTML = '';
     
     if (noDateTasks.length === 0) {
-        if (currentFilter === 'no-date') {
-            noDateTasksList.innerHTML = `
-                <li class="no-tasks">
-                    <p style="text-align: center; color: #71717a; padding: 2rem; font-weight: 400;">
-                        No tienes tareas sin fecha específica.
-                    </p>
-                </li>
-            `;
-            noDateTasksSection.classList.remove('empty');
-        }
+        const filterText = currentFilter === 'all' ? 'No tienes tareas sin fecha específica aún. ¡Agrega tu primera tarea!' : 
+                          currentFilter === 'pending' ? 'No tienes tareas sin fecha pendientes. ¡Buen trabajo!' : 
+                          currentFilter === 'completed' ? 'No tienes tareas sin fecha completadas aún.' :
+                          currentFilter === 'no-date' ? 'No tienes tareas sin fecha específica.' :
+                          `No tienes tareas sin fecha con prioridad ${getPriorityLabel(currentFilter)}.`;
+        
+        noDateTasksList.innerHTML = `
+            <li class="no-tasks">
+                <p style="text-align: center; color: #71717a; padding: 2rem; font-weight: 400;">
+                    ${filterText}
+                </p>
+            </li>
+        `;
         return;
     }
     
@@ -734,6 +723,14 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+// Función para formatear fecha evitando problemas de zona horaria
+function formatDateToString(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
 // Almacenamiento local mejorado
 function saveTasks(forceShow = false) {
     // Si ya se está guardando, evitar guardados múltiples
@@ -743,7 +740,6 @@ function saveTasks(forceShow = false) {
     
     // Verificar si realmente hay cambios
     if (!hasTasksChanged() && !forceShow) {
-        console.log('No hay cambios para guardar');
         return;
     }
     
@@ -768,12 +764,9 @@ function saveTasks(forceShow = false) {
             
             // Marcar como guardado
             markTasksAsSaved();
-            
-            console.log('Tareas guardadas correctamente');
         } else {
             // Los datos en localStorage ya están actualizados
             markTasksAsSaved();
-            console.log('Los datos ya estaban actualizados');
         }
         
     } catch (error) {
@@ -787,7 +780,6 @@ function saveTasks(forceShow = false) {
                 version: '1.0'
             };
             sessionStorage.setItem('todoTasks', JSON.stringify(tasksData));
-            console.log('Tareas guardadas en sessionStorage como respaldo');
             markTasksAsSaved();
         } catch (sessionError) {
             console.error('Error al guardar en sessionStorage:', sessionError);
@@ -810,13 +802,11 @@ function loadTasks() {
         if (!storedData) {
             // Si no existe, intentar cargar desde el respaldo
             storedData = localStorage.getItem('todoTasksBackup');
-            console.log('Cargando desde respaldo');
         }
         
         if (!storedData) {
             // Último intento desde sessionStorage
             storedData = sessionStorage.getItem('todoTasks');
-            console.log('Cargando desde sessionStorage');
         }
         
         if (storedData) {
@@ -825,11 +815,9 @@ function loadTasks() {
             // Verificar si es el formato nuevo con metadatos
             if (data.tasks && Array.isArray(data.tasks)) {
                 tasks = data.tasks;
-                console.log(`Tareas cargadas (${tasks.length}) - Última actualización: ${data.lastUpdated || 'N/A'}`);
             } else if (Array.isArray(data)) {  
                 // Formato antiguo - migrar
                 tasks = data;
-                console.log(`Tareas migradas desde formato antiguo (${tasks.length})`);
                 saveTasks(); // Guardar en nuevo formato
             }
             
@@ -882,10 +870,8 @@ function exportTasks() {
         
         const link = document.createElement('a');
         link.href = URL.createObjectURL(dataBlob);
-        link.download = `tareas-backup-${new Date().toISOString().split('T')[0]}.json`;
+        link.download = `tareas-backup-${formatDateToString(new Date())}.json`;
         link.click();
-        
-        console.log('Tareas exportadas correctamente');
     } catch (error) {
         console.error('Error al exportar tareas:', error);
         alert('Error al exportar las tareas');
@@ -901,13 +887,10 @@ function importTasks(file) {
             
             if (data.tasks && Array.isArray(data.tasks)) {
                 if (confirm(`¿Deseas importar ${data.tasks.length} tareas? Esto reemplazará tus tareas actuales.`)) {
-                                    tasks = data.tasks;
-                saveTasks(true); // Forzar guardado y mostrar confirmación
-                renderDatedTasks();
-                updateTaskStats();
-                generateCalendar();
-                updateSelectedDateTasks();
-                alert('Tareas importadas correctamente');
+                    tasks = data.tasks;
+                    saveTasks(true); // Forzar guardado y mostrar confirmación
+                    renderAllTasks();
+                    alert('Tareas importadas correctamente');
                 }
             } else {
                 alert('El archivo no tiene el formato correcto');
@@ -925,10 +908,7 @@ function clearCompletedTasks() {
     if (confirm('¿Estás seguro de que quieres eliminar todas las tareas completadas?')) {
         tasks = tasks.filter(task => !task.completed);
         onTasksChanged(true); // Guardar inmediatamente al limpiar tareas completadas
-        renderDatedTasks();
-        updateTaskStats();
-        generateCalendar();
-        updateSelectedDateTasks();
+        renderAllTasks();
     }
 }
 
@@ -1023,7 +1003,6 @@ function startAutoSave() {
     // Guardar cada 30 segundos si hay cambios sin guardar
     autoSaveInterval = setInterval(() => {
         if (hasUnsavedChanges && !isCurrentlySaving) {
-            console.log('Auto-guardado: Detectados cambios sin guardar');
             saveTasks();
         }
         
@@ -1045,12 +1024,6 @@ startAutoSave();
 window.addEventListener('beforeunload', function(e) {
     if (hasUnsavedChanges) {
         saveTasks(true); // Forzar guardado si hay cambios sin guardar
-    }
-    
-    // Mostrar información de almacenamiento en consola
-    const storageInfo = getStorageInfo();
-    if (storageInfo) {
-        console.log('Estado del almacenamiento:', storageInfo);
     }
 });
 
@@ -1181,13 +1154,32 @@ function renderRecurringTasks() {
             break;
     }
     
+    // Actualizar contador
+    recurringTasksCount.textContent = filteredTasks.length;
+    
+    // Siempre mostrar la sección
+    recurringTasksSection.classList.remove('empty');
+    
+    // Manejar colapso automático según contenido
+    autoCollapseSection('recurring-tasks', filteredTasks.length === 0);
+    
     recurringTasksList.innerHTML = '';
     
     if (filteredTasks.length === 0) {
-        recurringTasksSection.classList.add('empty');
+        const filterText = currentFilter === 'all' ? 'No tienes tareas recurrentes aún. ¡Crea tu primera tarea recurrente!' : 
+                          currentFilter === 'pending' ? 'No tienes tareas recurrentes pendientes. ¡Buen trabajo!' : 
+                          currentFilter === 'completed' ? 'No tienes tareas recurrentes completadas aún.' :
+                          currentFilter === 'recurring' ? 'No tienes tareas recurrentes aún. ¡Crea tu primera tarea recurrente!' :
+                          `No tienes tareas recurrentes con prioridad ${getPriorityLabel(currentFilter)}.`;
+        
+        recurringTasksList.innerHTML = `
+            <li class="no-tasks">
+                <p style="text-align: center; color: #71717a; padding: 2rem; font-weight: 400;">
+                    ${filterText}
+                </p>
+            </li>
+        `;
         return;
-    } else {
-        recurringTasksSection.classList.remove('empty');
     }
     
     filteredTasks.forEach(task => {
@@ -1218,9 +1210,6 @@ function renderRecurringTasks() {
         
         recurringTasksList.appendChild(li);
     });
-    
-    // Actualizar contador
-    recurringTasksCount.textContent = filteredTasks.length;
 }
 
 function getRecurringInfo(task) {
@@ -1255,11 +1244,13 @@ function generateRecurringTaskInstances(recurringTask) {
     const endDate = new Date(today);
     endDate.setDate(today.getDate() + 30); // Generar para los próximos 30 días
     
-    const startDate = recurringTask.date ? new Date(recurringTask.date) : today;
+    const startDate = recurringTask.date ? new Date(recurringTask.date + 'T00:00:00') : today;
     
-    for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
-        if (shouldCreateInstanceForDate(recurringTask, date)) {
-            const dateStr = date.toISOString().split('T')[0];
+    // Crear una nueva fecha para cada iteración para evitar problemas de zona horaria
+    for (let currentDate = new Date(startDate); currentDate <= endDate; currentDate.setDate(currentDate.getDate() + 1)) {
+        if (shouldCreateInstanceForDate(recurringTask, currentDate)) {
+            // Usar formato local para evitar problemas de zona horaria
+            const dateStr = formatDateToString(currentDate);
             
             // Verificar si ya existe una instancia para este día
             const existingInstance = tasks.find(task => 
@@ -1296,7 +1287,11 @@ function shouldCreateInstanceForDate(recurringTask, date) {
     // Si la tarea recurrente tiene una fecha de inicio, no crear instancias antes de esa fecha
     if (recurringTask.date) {
         const startDate = new Date(recurringTask.date + 'T00:00:00');
-        if (date < startDate) {
+        // Comparar solo las fechas (sin horas) para evitar problemas de zona horaria
+        const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+        
+        if (dateOnly < startDateOnly) {
             return false;
         }
     }
@@ -1336,7 +1331,6 @@ function cleanupPastRecurringInstances() {
     });
     
     if (tasksToRemove.length > 0) {
-        console.log(`Limpiando ${tasksToRemove.length} instancias de tareas recurrentes pasadas`);
         tasks = tasks.filter(task => !tasksToRemove.includes(task));
         onTasksChanged(true); // Guardar cambios inmediatamente
     }
@@ -1350,7 +1344,11 @@ function getRecurringTasksForDate(dateString) {
     const tasksForDate = [];
     
     // Solo mostrar tareas recurrentes para el día actual o fechas futuras
-    if (date < today) {
+    // Usar comparación de solo fecha para evitar problemas de zona horaria
+    const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    
+    if (dateOnly < todayOnly) {
         return tasksForDate; // Retornar array vacío para fechas pasadas
     }
     
@@ -1416,12 +1414,7 @@ function toggleTaskFromCalendar(task, dateString) {
     }
     
     // Actualizar las vistas
-    renderDatedTasks();
-    renderNoDateTasks();
-    renderRecurringTasks();
-    updateTaskStats();
-    generateCalendar();
-    updateSelectedDateTasks();
+    renderAllTasks();
 }
 
 // Función para inicializar la funcionalidad de colapso
@@ -1537,6 +1530,33 @@ function getTargetElement(sectionType) {
             return document.querySelector('.no-date-tasks-container');
         default:
             return null;
+    }
+}
+
+// Función para colapsar automáticamente secciones según su contenido
+function autoCollapseSection(sectionType, shouldCollapse) {
+    // Solo aplicar colapso automático si el usuario no ha interactuado manualmente con la sección
+    if (wasManuallyToggled(sectionType)) {
+        return; // El usuario tiene control manual, no interferir
+    }
+    
+    const targetElement = getTargetElement(sectionType);
+    const button = document.querySelector(`[data-section="${sectionType}"]`);
+    
+    if (!targetElement || !button) return;
+    
+    if (shouldCollapse) {
+        // Colapsar si está vacía
+        if (!targetElement.classList.contains('collapsed')) {
+            targetElement.classList.add('collapsed');
+            button.classList.add('collapsed');
+        }
+    } else {
+        // Expandir si tiene contenido
+        if (targetElement.classList.contains('collapsed')) {
+            targetElement.classList.remove('collapsed');
+            button.classList.remove('collapsed');
+        }
     }
 }
 
