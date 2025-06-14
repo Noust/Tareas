@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
     renderAllTasks();
     initializeCollapsible(); // Inicializar funcionalidad de colapso
     ensureMobileSectionsVisible(); // Asegurar que las secciones estén visibles en móviles
+    startAutomaticCleanup(); // Iniciar limpieza automática
 });
 
 // Event Listeners
@@ -278,6 +279,9 @@ function toggleTask(id) {
 }
 
 function renderAllTasks() {
+    // Limpiar instancias pasadas de tareas recurrentes antes de renderizar
+    cleanupPastRecurringInstances();
+    
     renderDatedTasks();
     renderNoDateTasks();
     renderRecurringTasks();
@@ -500,6 +504,9 @@ function updateTaskStats() {
 }
 
 function generateCalendar() {
+    // Limpiar instancias pasadas de tareas recurrentes antes de generar el calendario
+    cleanupPastRecurringInstances();
+    
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
     
@@ -1321,9 +1328,9 @@ function cleanupPastRecurringInstances() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
-    // Filtrar instancias de tareas recurrentes que no sean completadas y que ya pasaron
+    // Filtrar instancias de tareas recurrentes que ya pasaron (tanto completadas como no completadas)
     const tasksToRemove = tasks.filter(task => {
-        if (task.isRecurringInstance && task.date && !task.completed) {
+        if (task.isRecurringInstance && task.date) {
             const taskDate = new Date(task.date + 'T00:00:00');
             return taskDate < today;
         }
@@ -1331,6 +1338,8 @@ function cleanupPastRecurringInstances() {
     });
     
     if (tasksToRemove.length > 0) {
+        console.log(`Limpiando ${tasksToRemove.length} instancias de tareas recurrentes pasadas:`, 
+                   tasksToRemove.map(t => `${t.text} (${t.date})`));
         tasks = tasks.filter(task => !tasksToRemove.includes(task));
         onTasksChanged(true); // Guardar cambios inmediatamente
     }
@@ -1415,6 +1424,42 @@ function toggleTaskFromCalendar(task, dateString) {
     
     // Actualizar las vistas
     renderAllTasks();
+}
+
+// Función para limpiar automáticamente las tareas recurrentes pasadas
+function startAutomaticCleanup() {
+    // Guardar la fecha actual
+    let lastCleanupDate = localStorage.getItem('lastCleanupDate') || new Date().toDateString();
+    
+    // Función para verificar si ha pasado un día
+    function checkAndCleanup() {
+        const today = new Date().toDateString();
+        
+        // Si cambió el día, ejecutar limpieza
+        if (lastCleanupDate !== today) {
+            console.log('Nuevo día detectado, ejecutando limpieza automática...');
+            cleanupPastRecurringInstances();
+            generateRecurringTasks(); // Generar nuevas instancias para el nuevo día
+            renderAllTasks(); // Actualizar la vista
+            
+            // Actualizar la fecha de último cleanup
+            lastCleanupDate = today;
+            localStorage.setItem('lastCleanupDate', today);
+        }
+    }
+    
+    // Verificar cada minuto si cambió el día
+    setInterval(checkAndCleanup, 60000); // 60 segundos
+    
+    // También verificar al activar la ventana/pestaña
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            checkAndCleanup();
+        }
+    });
+    
+    // Verificar al obtener foco en la ventana
+    window.addEventListener('focus', checkAndCleanup);
 }
 
 // Función para inicializar la funcionalidad de colapso
